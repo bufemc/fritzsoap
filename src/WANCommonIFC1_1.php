@@ -4,9 +4,9 @@ namespace blacksenator\fritzsoap;
 
 /**
  * The class provides functions to read and manipulate
- * data via TR-064 interface on FRITZ!Box router from AVM.
+ * data via TR-064 interface on FRITZ!Box router from AVM:
  *
- * @see https://avm.de/fileadmin/user_upload/Global/Service/Schnittstellen/wancommonifconfigSCPD.pdf
+ * @see https://avm.de/fileadmin/user_upload/Global/Service/Schnittstellen/IGD1.pdf
  *
  * +++++++++++++++++++++ ATTENTION +++++++++++++++++++++
  * THIS FILE IS AUTOMATIC ASSEMBLED!
@@ -21,11 +21,11 @@ namespace blacksenator\fritzsoap;
 
 use blacksenator\fritzsoap\fritzsoap;
 
-class wancommonifconfig1 extends fritzsoap
+class WANCommonIFC1_1 extends fritzsoap
 {
     const
-        SERVICE_TYPE = 'urn:dslforum-org:service:WANCommonInterfaceConfig:1',
-        CONTROL_URL  = '/upnp/control/wancommonifconfig1';
+        SERVICE_TYPE = 'urn:schemas-upnp-org:service:WANCommonInterfaceConfig:1',
+        CONTROL_URL  = '/igd2upnp/control/WANCommonIFC1';
 
     /**
      * getCommonLinkProperties
@@ -126,19 +126,33 @@ class wancommonifconfig1 extends fritzsoap
     }
 
     /**
-     * x_AVM_DE_SetWANAccessType
+     * getAddonInfos
      *
      * automatically generated; complete coding if necessary!
      *
-     * in: NewAccessType (string)
+     * out: NewByteSendRate (ui4)
+     * out: NewByteReceiveRate (ui4)
+     * out: NewPacketSendRate (ui4)
+     * out: NewPacketReceiveRate (ui4)
+     * out: NewTotalBytesSent (ui4)
+     * out: NewTotalBytesReceived (ui4)
+     * out: NewAutoDisconnectTime (ui4)
+     * out: NewIdleDisconnectTime (ui4)
+     * out: NewDNSServer1 (string)
+     * out: NewDNSServer2 (string)
+     * out: NewVoipDNSServer1 (string)
+     * out: NewVoipDNSServer2 (string)
+     * out: NewUpnpControlEnabled (boolean)
+     * out: NewRoutedBridgedModeBoth (ui1)
+     * out: NewX_AVM_DE_TotalBytesSent64 (string)
+     * out: NewX_AVM_DE_TotalBytesReceived64 (string)
+     * out: NewX_AVM_DE_WANAccessType (string)
      *
-     * @param string $accessType
-     * @return void
+     * @return array
      */
-    public function x_AVM_DE_SetWANAccessType($accessType)
+    public function getAddonInfos()
     {
-        $result = $this->client->{'X_AVM-DE_SetWANAccessType'}(
-            new \SoapParam($accessType, 'NewAccessType'));
+        $result = $this->client->GetAddonInfos();
         if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
             return;
         }
@@ -147,31 +161,38 @@ class wancommonifconfig1 extends fritzsoap
     }
 
     /**
-     * x_AVM_DE_GetOnlineMonitor
+     * x_AVM_DE_GetDsliteStatus
      *
      * automatically generated; complete coding if necessary!
      *
-     * in: NewSyncGroupIndex (ui4)
-     * out: NewTotalNumberSyncGroups (ui4)
-     * out: NewSyncGroupName (string)
-     * out: NewSyncGroupMode (string)
-     * out: Newmax_ds (ui4)
-     * out: Newmax_us (ui4)
-     * out: Newds_current_bps (string)
-     * out: Newmc_current_bps (string)
-     * out: Newus_current_bps (string)
-     * out: Newprio_realtime_bps (string)
-     * out: Newprio_high_bps (string)
-     * out: Newprio_default_bps (string)
-     * out: Newprio_low_bps (string)
+     * out: NewX_AVM_DE_DsliteStatus (boolean)
      *
-     * @param int $syncGroupIndex
+     * @return bool
+     */
+    public function x_AVM_DE_GetDsliteStatus()
+    {
+        $result = $this->client->X_AVM_DE_GetDsliteStatus();
+        if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
+            return;
+        }
+
+        return $result;
+    }
+
+    /**
+     * x_AVM_DE_GetIPTVInfos
+     *
+     * automatically generated; complete coding if necessary!
+     *
+     * out: NewX_AVM_DE_IPTV_Enabled (boolean)
+     * out: NewX_AVM_DE_IPTV_Provider (string)
+     * out: NewX_AVM_DE_IPTV_URL (string)
+     *
      * @return array
      */
-    public function x_AVM_DE_GetOnlineMonitor($syncGroupIndex)
+    public function x_AVM_DE_GetIPTVInfos()
     {
-        $result = $this->client->{'X_AVM-DE_GetOnlineMonitor'}(
-            new \SoapParam($syncGroupIndex, 'NewSyncGroupIndex'));
+        $result = $this->client->X_AVM_DE_GetIPTVInfos();
         if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
             return;
         }

@@ -5,8 +5,9 @@ namespace blacksenator\fritzsoap;
 /**
  * The class provides functions to read and manipulate
  * data via TR-064 interface on FRITZ!Box router from AVM.
+ * No specific documentation available!
  *
- * @see: https://avm.de/fileadmin/user_upload/Global/Service/Schnittstellen/x_upnp.pdf
+ * @see: https://avm.de/service/schnittstellen/
  *
  * +++++++++++++++++++++ ATTENTION +++++++++++++++++++++
  * THIS FILE IS AUTOMATIC ASSEMBLED!
@@ -21,51 +22,51 @@ namespace blacksenator\fritzsoap;
 
 use blacksenator\fritzsoap\fritzsoap;
 
-class x_upnp extends fritzsoap
+class Control_4 extends fritzsoap
 {
     const
-        SERVICE_TYPE = 'urn:dslforum-org:service:X_AVM-DE_UPnP:1',
-        CONTROL_URL  = '/upnp/control/x_upnp';
+        SERVICE_TYPE = 'urn:microsoft.com:service:X_MS_MediaReceiverRegistrar:1',
+        CONTROL_URL  = '/MediaServer/MediaReceiverRegistrar/Control';
 
     /**
-     * getInfo
+     * isAuthorized
      *
      * automatically generated; complete coding if necessary!
      *
-     * out: NewEnable (boolean)
-     * out: NewUPnPMediaServer (boolean)
+     * in: DeviceID (string)
+     * out: Result (int)
      *
-     * @return array
+     * @param string $deviceID
+     * @return int
      */
-    public function getInfo()
+    public function isAuthorized($deviceID)
     {
-        $result = $this->client->GetInfo();
+        $result = $this->client->IsAuthorized(
+            new \SoapParam($deviceID, 'DeviceID'));
         if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
-            return;
+            return null;
         }
 
         return $result;
     }
 
     /**
-     * setConfig
+     * isValidated
      *
      * automatically generated; complete coding if necessary!
      *
-     * in: NewEnable (boolean)
-     * in: NewUPnPMediaServer (boolean)
+     * in: DeviceID (string)
+     * out: Result (int)
      *
-     * @param bool $enable
-     * @param bool $uPnPMediaServer
-     * @return void
+     * @param string $deviceID
+     * @return int
      */
-    public function setConfig($enable, $uPnPMediaServer)
+    public function isValidated($deviceID)
     {
-        $result = $this->client->SetConfig(
-            new \SoapParam($enable, 'NewEnable'),
-            new \SoapParam($uPnPMediaServer, 'NewUPnPMediaServer'));
+        $result = $this->client->IsValidated(
+            new \SoapParam($deviceID, 'DeviceID'));
         if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
-            return;
+            return null;
         }
 
         return $result;

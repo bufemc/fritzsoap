@@ -5,8 +5,9 @@ namespace blacksenator\fritzsoap;
 /**
  * The class provides functions to read and manipulate
  * data via TR-064 interface on FRITZ!Box router from AVM.
+ * No specific documentation available!
  *
- * @see: https://avm.de/fileadmin/user_upload/Global/Service/Schnittstellen/x_upnp.pdf
+ * @see: https://avm.de/service/schnittstellen/
  *
  * +++++++++++++++++++++ ATTENTION +++++++++++++++++++++
  * THIS FILE IS AUTOMATIC ASSEMBLED!
@@ -21,49 +22,26 @@ namespace blacksenator\fritzsoap;
 
 use blacksenator\fritzsoap\fritzsoap;
 
-class x_upnp extends fritzsoap
+class l2tpv3 extends fritzsoap
 {
     const
-        SERVICE_TYPE = 'urn:dslforum-org:service:X_AVM-DE_UPnP:1',
-        CONTROL_URL  = '/upnp/control/x_upnp';
+        SERVICE_TYPE = 'urn:schemas-any-com:service:l2tpv3:1',
+        CONTROL_URL  = '/upnp/control/l2tpv3';
 
     /**
      * getInfo
      *
      * automatically generated; complete coding if necessary!
      *
-     * out: NewEnable (boolean)
-     * out: NewUPnPMediaServer (boolean)
+     * out: ServerIP (string)
+     * out: ServerInstanceId (string)
+     * out: RemoteEndIds (string)
      *
      * @return array
      */
     public function getInfo()
     {
         $result = $this->client->GetInfo();
-        if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
-            return;
-        }
-
-        return $result;
-    }
-
-    /**
-     * setConfig
-     *
-     * automatically generated; complete coding if necessary!
-     *
-     * in: NewEnable (boolean)
-     * in: NewUPnPMediaServer (boolean)
-     *
-     * @param bool $enable
-     * @param bool $uPnPMediaServer
-     * @return void
-     */
-    public function setConfig($enable, $uPnPMediaServer)
-    {
-        $result = $this->client->SetConfig(
-            new \SoapParam($enable, 'NewEnable'),
-            new \SoapParam($uPnPMediaServer, 'NewUPnPMediaServer'));
         if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
             return;
         }

@@ -3,30 +3,20 @@
 namespace blacksenator\fritzsoap;
 
 /**
-* The class provides functions to read and manipulate
-* data via TR-064 interface on FRITZ!Box router from AVM:
-* according to:
-* @see: https://avm.de/fileadmin/user_upload/Global/Service/Schnittstellen/hostsSCPD.pdf
-*
-* With the instantiation of the class, all available
-* services of the addressed FRITZ!Box are determined.
-* The service parameters and available actions are
-* provided in a compressed form as XML and can be output
-* with getServiceDescription().
-* The matching SOAP client only needs to be called with
-* the name of the services <services name = "..."> and
-* gets the correct location and uri from the XML
-* (see getFritzBoxServices() for details)
-*
-* +++++++++++++++++++++ ATTENTION +++++++++++++++++++++
-* THIS FILE IS AUTOMATIC ASSEMBLED BUT PARTLY REVIEWED!
-* ALL FUNCTIONS ARE FRAMEWORKS AND HAVE TO BE CORRECTLY
-* CODED, IF THEIR COMMENT WAS NOT OVERWRITTEN!
-* +++++++++++++++++++++++++++++++++++++++++++++++++++++
-*
-* @author Volker Püschel <knuffy@anasco.de>
-* @copyright Volker Püschel 2020
-* @license MIT
+ * The class provides functions to read and manipulate
+ * data via TR-064 interface on FRITZ!Box router from AVM:
+ *
+ * @see: https://avm.de/fileadmin/user_upload/Global/Service/Schnittstellen/hostsSCPD.pdf
+ *
+ * +++++++++++++++++++++ ATTENTION +++++++++++++++++++++
+ * THIS FILE IS AUTOMATIC ASSEMBLED BUT PARTLY REVIEWED!
+ * ALL FUNCTIONS ARE FRAMEWORKS AND HAVE TO BE CORRECTLY
+ * CODED, IF THEIR COMMENT WAS NOT OVERWRITTEN!
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ *
+ * @author Volker Püschel <knuffy@anasco.de>
+ * @copyright Volker Püschel 2019 - 2021
+ * @license MIT
 **/
 
 use blacksenator\fritzsoap\fritzsoap;
@@ -34,20 +24,23 @@ use \SimpleXMLElement;
 
 class hosts extends fritzsoap
 {
+    const
+        SERVICE_TYPE = 'urn:dslforum-org:service:Hosts:1',
+        CONTROL_URL  = '/upnp/control/hosts';
+
     /**
      * getHostNumberOfEntries
      *
      * automatically generated; complete coding if necessary!
      *
-     * out: NewHostNumberOfEntries
+     * out: NewHostNumberOfEntries (ui2)
      *
+     * @return int
      */
     public function getHostNumberOfEntries()
     {
         $result = $this->client->GetHostNumberOfEntries();
-        if (is_soap_fault($result)) {
-            $this->getErrorData($result);
-            error_log(sprintf("Error: %s (%s)! Could not ... from/to FRITZ!Box", $this->errorCode, $this->errorText));
+        if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
             return;
         }
 
@@ -59,21 +52,22 @@ class hosts extends fritzsoap
      *
      * automatically generated; complete coding if necessary!
      *
-     * in: NewMACAddress
-     * out: NewIPAddress
-     * out: NewAddressSource
-     * out: NewLeaseTimeRemaining
-     * out: NewInterfaceType
-     * out: NewActive
-     * out: NewHostName
+     * in: NewMACAddress (string)
+     * out: NewIPAddress (string)
+     * out: NewAddressSource (string)
+     * out: NewLeaseTimeRemaining (i4)
+     * out: NewInterfaceType (string)
+     * out: NewActive (boolean)
+     * out: NewHostName (string)
      *
+     * @param string $mACAddress
+     * @return array
      */
-    public function getSpecificHostEntry()
+    public function getSpecificHostEntry($mACAddress)
     {
-        $result = $this->client->GetSpecificHostEntry();
-        if (is_soap_fault($result)) {
-            $this->getErrorData($result);
-            error_log(sprintf("Error: %s (%s)! Could not ... from/to FRITZ!Box", $this->errorCode, $this->errorText));
+        $result = $this->client->GetSpecificHostEntry(
+            new \SoapParam($mACAddress, 'NewMACAddress'));
+        if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
             return;
         }
 
@@ -85,22 +79,23 @@ class hosts extends fritzsoap
      *
      * automatically generated; complete coding if necessary!
      *
-     * in: NewIndex
-     * out: NewIPAddress
-     * out: NewAddressSource
-     * out: NewLeaseTimeRemaining
-     * out: NewMACAddress
-     * out: NewInterfaceType
-     * out: NewActive
-     * out: NewHostName
+     * in: NewIndex (ui2)
+     * out: NewIPAddress (string)
+     * out: NewAddressSource (string)
+     * out: NewLeaseTimeRemaining (i4)
+     * out: NewMACAddress (string)
+     * out: NewInterfaceType (string)
+     * out: NewActive (boolean)
+     * out: NewHostName (string)
      *
+     * @param int $index
+     * @return array
      */
-    public function getGenericHostEntry()
+    public function getGenericHostEntry($index)
     {
-        $result = $this->client->GetGenericHostEntry();
-        if (is_soap_fault($result)) {
-            $this->getErrorData($result);
-            error_log(sprintf("Error: %s (%s)! Could not ... from/to FRITZ!Box", $this->errorCode, $this->errorText));
+        $result = $this->client->GetGenericHostEntry(
+            new \SoapParam($index, 'NewIndex'));
+        if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
             return;
         }
 
@@ -112,15 +107,14 @@ class hosts extends fritzsoap
      *
      * automatically generated; complete coding if necessary!
      *
-     * out: NewX_AVM-DE_ChangeCounter
+     * out: NewX_AVM-DE_ChangeCounter (ui4)
      *
+     * @return int
      */
     public function x_AVM_DE_GetChangeCounter()
     {
         $result = $this->client->{'X_AVM-DE_GetChangeCounter'}();
-        if (is_soap_fault($result)) {
-            $this->getErrorData($result);
-            error_log(sprintf("Error: %s (%s)! Could not ... from/to FRITZ!Box", $this->errorCode, $this->errorText));
+        if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
             return;
         }
 
@@ -132,16 +126,19 @@ class hosts extends fritzsoap
      *
      * automatically generated; complete coding if necessary!
      *
-     * in: NewMACAddress
-     * in: NewHostName
+     * in: NewMACAddress (string)
+     * in: NewHostName (string)
      *
+     * @param string $mACAddress
+     * @param string $hostName
+     * @return void
      */
-    public function x_AVM_DE_SetHostNameByMACAddress()
+    public function x_AVM_DE_SetHostNameByMACAddress($mACAddress, $hostName)
     {
-        $result = $this->client->{'X_AVM-DE_SetHostNameByMACAddress'}();
-        if (is_soap_fault($result)) {
-            $this->getErrorData($result);
-            error_log(sprintf("Error: %s (%s)! Could not ... from/to FRITZ!Box", $this->errorCode, $this->errorText));
+        $result = $this->client->{'X_AVM-DE_SetHostNameByMACAddress'}(
+            new \SoapParam($mACAddress, 'NewMACAddress'),
+            new \SoapParam($hostName, 'NewHostName'));
+        if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
             return;
         }
 
@@ -153,16 +150,17 @@ class hosts extends fritzsoap
      *
      * automatically generated; complete coding if necessary!
      *
-     * in: NewMACAddress
-     * out: NewAutoWOLEnabled
+     * in: NewMACAddress (string)
+     * out: NewAutoWOLEnabled (boolean)
      *
+     * @param string $mACAddress
+     * @return bool
      */
-    public function x_AVM_DE_GetAutoWakeOnLANByMACAddress()
+    public function x_AVM_DE_GetAutoWakeOnLANByMACAddress($mACAddress)
     {
-        $result = $this->client->{'X_AVM-DE_GetAutoWakeOnLANByMACAddress'}();
-        if (is_soap_fault($result)) {
-            $this->getErrorData($result);
-            error_log(sprintf("Error: %s (%s)! Could not ... from/to FRITZ!Box", $this->errorCode, $this->errorText));
+        $result = $this->client->{'X_AVM-DE_GetAutoWakeOnLANByMACAddress'}(
+            new \SoapParam($mACAddress, 'NewMACAddress'));
+        if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
             return;
         }
 
@@ -174,16 +172,19 @@ class hosts extends fritzsoap
      *
      * automatically generated; complete coding if necessary!
      *
-     * in: NewMACAddress
-     * in: NewAutoWOLEnabled
+     * in: NewMACAddress (string)
+     * in: NewAutoWOLEnabled (boolean)
      *
+     * @param string $mACAddress
+     * @param bool $autoWOLEnabled
+     * @return void
      */
-    public function x_AVM_DE_SetAutoWakeOnLANByMACAddress()
+    public function x_AVM_DE_SetAutoWakeOnLANByMACAddress($mACAddress, $autoWOLEnabled)
     {
-        $result = $this->client->{'X_AVM-DE_SetAutoWakeOnLANByMACAddress'}();
-        if (is_soap_fault($result)) {
-            $this->getErrorData($result);
-            error_log(sprintf("Error: %s (%s)! Could not ... from/to FRITZ!Box", $this->errorCode, $this->errorText));
+        $result = $this->client->{'X_AVM-DE_SetAutoWakeOnLANByMACAddress'}(
+            new \SoapParam($mACAddress, 'NewMACAddress'),
+            new \SoapParam($autoWOLEnabled, 'NewAutoWOLEnabled'));
+        if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
             return;
         }
 
@@ -195,15 +196,16 @@ class hosts extends fritzsoap
      *
      * automatically generated; complete coding if necessary!
      *
-     * in: NewMACAddress
+     * in: NewMACAddress (string)
      *
+     * @param string $mACAddress
+     * @return void
      */
-    public function x_AVM_DE_WakeOnLANByMACAddress()
+    public function x_AVM_DE_WakeOnLANByMACAddress($mACAddress)
     {
-        $result = $this->client->{'X_AVM-DE_WakeOnLANByMACAddress'}();
-        if (is_soap_fault($result)) {
-            $this->getErrorData($result);
-            error_log(sprintf("Error: %s (%s)! Could not ... from/to FRITZ!Box", $this->errorCode, $this->errorText));
+        $result = $this->client->{'X_AVM-DE_WakeOnLANByMACAddress'}(
+            new \SoapParam($mACAddress, 'NewMACAddress'));
+        if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
             return;
         }
 
@@ -215,26 +217,27 @@ class hosts extends fritzsoap
      *
      * automatically generated; complete coding if necessary!
      *
-     * in: NewIPAddress
-     * out: NewMACAddress
-     * out: NewActive
-     * out: NewHostName
-     * out: NewInterfaceType
-     * out: NewX_AVM-DE_Port
-     * out: NewX_AVM-DE_Speed
-     * out: NewX_AVM-DE_UpdateAvailable
-     * out: NewX_AVM-DE_UpdateSuccessful
-     * out: NewX_AVM-DE_InfoURL
-     * out: NewX_AVM-DE_Model
-     * out: NewX_AVM-DE_URL
+     * in: NewIPAddress (string)
+     * out: NewMACAddress (string)
+     * out: NewActive (boolean)
+     * out: NewHostName (string)
+     * out: NewInterfaceType (string)
+     * out: NewX_AVM-DE_Port (ui4)
+     * out: NewX_AVM-DE_Speed (ui4)
+     * out: NewX_AVM-DE_UpdateAvailable (boolean)
+     * out: NewX_AVM-DE_UpdateSuccessful (string)
+     * out: NewX_AVM-DE_InfoURL (string)
+     * out: NewX_AVM-DE_Model (string)
+     * out: NewX_AVM-DE_URL (string)
      *
+     * @param string $iPAddress
+     * @return array
      */
-    public function x_AVM_DE_GetSpecificHostEntryByIP()
+    public function x_AVM_DE_GetSpecificHostEntryByIP($iPAddress)
     {
-        $result = $this->client->{'X_AVM-DE_GetSpecificHostEntryByIP'}();
-        if (is_soap_fault($result)) {
-            $this->getErrorData($result);
-            error_log(sprintf("Error: %s (%s)! Could not ... from/to FRITZ!Box", $this->errorCode, $this->errorText));
+        $result = $this->client->{'X_AVM-DE_GetSpecificHostEntryByIP'}(
+            new \SoapParam($iPAddress, 'NewIPAddress'));
+        if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
             return;
         }
 
@@ -246,14 +249,12 @@ class hosts extends fritzsoap
      *
      * automatically generated; complete coding if necessary!
      *
-     *
+     * @return void
      */
     public function x_AVM_DE_HostsCheckUpdate()
     {
         $result = $this->client->{'X_AVM-DE_HostsCheckUpdate'}();
-        if (is_soap_fault($result)) {
-            $this->getErrorData($result);
-            error_log(sprintf("Error: %s (%s)! Could not ... from/to FRITZ!Box", $this->errorCode, $this->errorText));
+        if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
             return;
         }
 
@@ -265,15 +266,16 @@ class hosts extends fritzsoap
      *
      * automatically generated; complete coding if necessary!
      *
-     * in: NewMACAddress
+     * in: NewMACAddress (string)
      *
+     * @param string $mACAddress
+     * @return void
      */
-    public function x_AVM_DE_HostDoUpdate()
+    public function x_AVM_DE_HostDoUpdate($mACAddress)
     {
-        $result = $this->client->{'X_AVM-DE_HostDoUpdate'}();
-        if (is_soap_fault($result)) {
-            $this->getErrorData($result);
-            error_log(sprintf("Error: %s (%s)! Could not ... from/to FRITZ!Box", $this->errorCode, $this->errorText));
+        $result = $this->client->{'X_AVM-DE_HostDoUpdate'}(
+            new \SoapParam($mACAddress, 'NewMACAddress'));
+        if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
             return;
         }
 
@@ -285,15 +287,14 @@ class hosts extends fritzsoap
      *
      * automatically generated; complete coding if necessary!
      *
-     * out: NewX_AVM-DE_HostListPath
+     * out: NewX_AVM-DE_HostListPath (string)
      *
+     * @return string
      */
     public function x_AVM_DE_GetHostListPath()
     {
         $result = $this->client->{'X_AVM-DE_GetHostListPath'}();
-        if (is_soap_fault($result)) {
-            $this->getErrorData($result);
-            error_log(sprintf("Error: %s (%s)! Could not ... from/to FRITZ!Box", $this->errorCode, $this->errorText));
+        if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
             return;
         }
 
@@ -303,8 +304,6 @@ class hosts extends fritzsoap
     /**
      * x_AVM_DE_GetMeshListPath
      *
-     * out: NewX_AVM-DE_MeshListPath
-     *
      * get a XML list of connected devices to the network
      * requires a client of 'hosts'
      *
@@ -313,9 +312,7 @@ class hosts extends fritzsoap
     public function x_AVM_DE_GetMeshListPath()
     {
         $result = $this->client->{'X_AVM-DE_GetMeshListPath'}();
-        if (is_soap_fault($result)) {
-            $this->getErrorData($result);
-            error_log(sprintf("Error: %s (%s)! Could not get mesh list from FRITZ!Box", $this->errorCode, $this->errorText));
+        if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
             return;
         }
         $meshListArray = json_decode(file_get_contents($this->serverAdress . $result), true);

@@ -3,50 +3,45 @@
 namespace blacksenator\fritzsoap;
 
 /**
-* The class provides functions to read and manipulate
-* data via TR-064 interface on FRITZ!Box router from AVM
-*
-* With the instantiation of the class, all available
-* services of the addressed FRITZ!Box are determined.
-* The service parameters and available actions are
-* provided in a compressed form as XML and can be output
-* with getServiceDescription().
-* The matching SOAP client only needs to be called with
-* the name of the services <services name = "..."> and
-* gets the correct location and uri from the XML
-* (see getFritzBoxServices() for details)
-*
-* +++++++++++++++++++++ ATTENTION +++++++++++++++++++++
-* THIS FILE IS AUTOMATIC ASSEMBLED!
-* ALL FUNCTIONS ARE FRAMEWORKS AND HAVE TO BE CORRECTLY
-* CODED, IF THEIR COMMENT WAS NOT OVERWRITTEN!
-* +++++++++++++++++++++++++++++++++++++++++++++++++++++
-*
-* @author Volker Püschel <knuffy@anasco.de>
-* @copyright Volker Püschel 2020
-* @license MIT
+ * The class provides functions to read and manipulate
+ * data via TR-064 interface on FRITZ!Box router from AVM:
+ *
+ * @see: https://avm.de/fileadmin/user_upload/Global/Service/Schnittstellen/x_remoteSCPD.pdf
+ *
+ * +++++++++++++++++++++ ATTENTION +++++++++++++++++++++
+ * THIS FILE IS AUTOMATIC ASSEMBLED!
+ * ALL FUNCTIONS ARE FRAMEWORKS AND HAVE TO BE CORRECTLY
+ * CODED, IF THEIR COMMENT WAS NOT OVERWRITTEN!
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ *
+ * @author Volker Püschel <knuffy@anasco.de>
+ * @copyright Volker Püschel 2019 - 2021
+ * @license MIT
 **/
 
 use blacksenator\fritzsoap\fritzsoap;
 
 class x_remote extends fritzsoap
 {
+    const
+        SERVICE_TYPE = 'urn:dslforum-org:service:X_AVM-DE_RemoteAccess:1',
+        CONTROL_URL  = '/upnp/control/x_remote';
+
     /**
      * getInfo
      *
      * automatically generated; complete coding if necessary!
      *
-     * out: NewEnabled
-     * out: NewPort
-     * out: NewUsername
+     * out: NewEnabled (boolean)
+     * out: NewPort (string)
+     * out: NewUsername (string)
      *
+     * @return array
      */
     public function getInfo()
     {
         $result = $this->client->GetInfo();
-        if (is_soap_fault($result)) {
-            $this->getErrorData($result);
-            error_log(sprintf("Error: %s (%s)! Could not ... from/to FRITZ!Box", $this->errorCode, $this->errorText));
+        if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
             return;
         }
 
@@ -58,18 +53,25 @@ class x_remote extends fritzsoap
      *
      * automatically generated; complete coding if necessary!
      *
-     * in: NewEnabled
-     * in: NewPort
-     * in: NewUsername
-     * in: NewPassword
+     * in: NewEnabled (boolean)
+     * in: NewPort (string)
+     * in: NewUsername (string)
+     * in: NewPassword (string)
      *
+     * @param bool $enabled
+     * @param string $port
+     * @param string $username
+     * @param string $password
+     * @return void
      */
-    public function setConfig()
+    public function setConfig($enabled, $port, $username, $password)
     {
-        $result = $this->client->SetConfig();
-        if (is_soap_fault($result)) {
-            $this->getErrorData($result);
-            error_log(sprintf("Error: %s (%s)! Could not ... from/to FRITZ!Box", $this->errorCode, $this->errorText));
+        $result = $this->client->SetConfig(
+            new \SoapParam($enabled, 'NewEnabled'),
+            new \SoapParam($port, 'NewPort'),
+            new \SoapParam($username, 'NewUsername'),
+            new \SoapParam($password, 'NewPassword'));
+        if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
             return;
         }
 
@@ -81,16 +83,17 @@ class x_remote extends fritzsoap
      *
      * automatically generated; complete coding if necessary!
      *
-     * in: NewEnabled
-     * out: NewPort
+     * in: NewEnabled (boolean)
+     * out: NewPort (string)
      *
+     * @param bool $enabled
+     * @return string
      */
-    public function setEnable()
+    public function setEnable($enabled)
     {
-        $result = $this->client->SetEnable();
-        if (is_soap_fault($result)) {
-            $this->getErrorData($result);
-            error_log(sprintf("Error: %s (%s)! Could not ... from/to FRITZ!Box", $this->errorCode, $this->errorText));
+        $result = $this->client->SetEnable(
+            new \SoapParam($enabled, 'NewEnabled'));
+        if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
             return;
         }
 
@@ -102,24 +105,23 @@ class x_remote extends fritzsoap
      *
      * automatically generated; complete coding if necessary!
      *
-     * out: NewEnabled
-     * out: NewProviderName
-     * out: NewUpdateURL
-     * out: NewDomain
-     * out: NewStatusIPv4
-     * out: NewStatusIPv6
-     * out: NewUsername
-     * out: NewMode
-     * out: NewServerIPv4
-     * out: NewServerIPv6
+     * out: NewEnabled (boolean)
+     * out: NewProviderName (string)
+     * out: NewUpdateURL (string)
+     * out: NewDomain (string)
+     * out: NewStatusIPv4 (string)
+     * out: NewStatusIPv6 (string)
+     * out: NewUsername (string)
+     * out: NewMode (string)
+     * out: NewServerIPv4 (string)
+     * out: NewServerIPv6 (string)
      *
+     * @return array
      */
     public function getDDNSInfo()
     {
         $result = $this->client->GetDDNSInfo();
-        if (is_soap_fault($result)) {
-            $this->getErrorData($result);
-            error_log(sprintf("Error: %s (%s)! Could not ... from/to FRITZ!Box", $this->errorCode, $this->errorText));
+        if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
             return;
         }
 
@@ -131,15 +133,14 @@ class x_remote extends fritzsoap
      *
      * automatically generated; complete coding if necessary!
      *
-     * out: NewProviderList
+     * out: NewProviderList (string)
      *
+     * @return string
      */
     public function getDDNSProviders()
     {
         $result = $this->client->GetDDNSProviders();
-        if (is_soap_fault($result)) {
-            $this->getErrorData($result);
-            error_log(sprintf("Error: %s (%s)! Could not ... from/to FRITZ!Box", $this->errorCode, $this->errorText));
+        if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
             return;
         }
 
@@ -151,23 +152,40 @@ class x_remote extends fritzsoap
      *
      * automatically generated; complete coding if necessary!
      *
-     * in: NewEnabled
-     * in: NewProviderName
-     * in: NewUpdateURL
-     * in: NewDomain
-     * in: NewUsername
-     * in: NewMode
-     * in: NewServerIPv4
-     * in: NewServerIPv6
-     * in: NewPassword
+     * in: NewEnabled (boolean)
+     * in: NewProviderName (string)
+     * in: NewUpdateURL (string)
+     * in: NewDomain (string)
+     * in: NewUsername (string)
+     * in: NewMode (string)
+     * in: NewServerIPv4 (string)
+     * in: NewServerIPv6 (string)
+     * in: NewPassword (string)
      *
+     * @param bool $enabled
+     * @param string $providerName
+     * @param string $updateURL
+     * @param string $domain
+     * @param string $username
+     * @param string $mode
+     * @param string $serverIPv4
+     * @param string $serverIPv6
+     * @param string $password
+     * @return void
      */
-    public function setDDNSConfig()
+    public function setDDNSConfig($enabled, $providerName, $updateURL, $domain, $username, $mode, $serverIPv4, $serverIPv6, $password)
     {
-        $result = $this->client->SetDDNSConfig();
-        if (is_soap_fault($result)) {
-            $this->getErrorData($result);
-            error_log(sprintf("Error: %s (%s)! Could not ... from/to FRITZ!Box", $this->errorCode, $this->errorText));
+        $result = $this->client->SetDDNSConfig(
+            new \SoapParam($enabled, 'NewEnabled'),
+            new \SoapParam($providerName, 'NewProviderName'),
+            new \SoapParam($updateURL, 'NewUpdateURL'),
+            new \SoapParam($domain, 'NewDomain'),
+            new \SoapParam($username, 'NewUsername'),
+            new \SoapParam($mode, 'NewMode'),
+            new \SoapParam($serverIPv4, 'NewServerIPv4'),
+            new \SoapParam($serverIPv6, 'NewServerIPv6'),
+            new \SoapParam($password, 'NewPassword'));
+        if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
             return;
         }
 

@@ -21,11 +21,11 @@ namespace blacksenator\fritzsoap;
 
 use blacksenator\fritzsoap\fritzsoap;
 
-class wlanconfig1 extends fritzsoap
+class wlanconfig2 extends fritzsoap
 {
     const
-        SERVICE_TYPE = 'urn:dslforum-org:service:WLANConfiguration:1',
-        CONTROL_URL  = '/upnp/control/wlanconfig1';
+        SERVICE_TYPE = 'urn:dslforum-org:service:WLANConfiguration:2',
+        CONTROL_URL  = '/upnp/control/wlanconfig2';
 
     /**
      * setEnable

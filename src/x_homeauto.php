@@ -3,54 +3,47 @@
 namespace blacksenator\fritzsoap;
 
 /**
-* The class provides functions to read and manipulate
-* data via TR-064 interface on FRITZ!Box router from AVM:
-* according to:
-* @see: https://avm.de/fileadmin/user_upload/Global/Service/Schnittstellen/x_homeauto.pdf
-*
-* With the instantiation of the class, all available
-* services of the addressed FRITZ!Box are determined.
-* The service parameters and available actions are
-* provided in a compressed form as XML and can be output
-* with getServiceDescription().
-* The matching SOAP client only needs to be called with
-* the name of the services <services name = "..."> and
-* gets the correct location and uri from the XML
-* (see getFritzBoxServices() for details)
-*
-* +++++++++++++++++++++ ATTENTION +++++++++++++++++++++
-* THIS FILE IS AUTOMATIC ASSEMBLED!
-* ALL FUNCTIONS ARE FRAMEWORKS AND HAVE TO BE CORRECTLY
-* CODED, IF THEIR COMMENT WAS NOT OVERWRITTEN!
-* +++++++++++++++++++++++++++++++++++++++++++++++++++++
-*
-* @author Volker Püschel <knuffy@anasco.de>
-* @copyright Volker Püschel 2020
-* @license MIT
+ * The class provides functions to read and manipulate
+ * data via TR-064 interface on FRITZ!Box router from AVM.
+ *
+ * @see: https://avm.de/fileadmin/user_upload/Global/Service/Schnittstellen/x_homeauto.pdf
+ *
+ * +++++++++++++++++++++ ATTENTION +++++++++++++++++++++
+ * THIS FILE IS AUTOMATIC ASSEMBLED!
+ * ALL FUNCTIONS ARE FRAMEWORKS AND HAVE TO BE CORRECTLY
+ * CODED, IF THEIR COMMENT WAS NOT OVERWRITTEN!
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ *
+ * @author Volker Püschel <knuffy@anasco.de>
+ * @copyright Volker Püschel 2019 - 2021
+ * @license MIT
 **/
 
 use blacksenator\fritzsoap\fritzsoap;
 
 class x_homeauto extends fritzsoap
 {
+    const
+        SERVICE_TYPE = 'urn:dslforum-org:service:X_AVM-DE_Homeauto:1',
+        CONTROL_URL  = '/upnp/control/x_homeauto';
+
     /**
      * getInfo
      *
      * automatically generated; complete coding if necessary!
      *
-     * out: NewAllowedCharsAIN
-     * out: NewMaxCharsAIN
-     * out: NewMinCharsAIN
-     * out: NewMaxCharsDeviceName
-     * out: NewMinCharsDeviceName
+     * out: NewAllowedCharsAIN (string)
+     * out: NewMaxCharsAIN (ui2)
+     * out: NewMinCharsAIN (ui2)
+     * out: NewMaxCharsDeviceName (ui2)
+     * out: NewMinCharsDeviceName (ui2)
      *
+     * @return array
      */
     public function getInfo()
     {
         $result = $this->client->GetInfo();
-        if (is_soap_fault($result)) {
-            $this->getErrorData($result);
-            error_log(sprintf("Error: %s (%s)! Could not ... from/to FRITZ!Box", $this->errorCode, $this->errorText));
+        if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
             return;
         }
 
@@ -62,45 +55,46 @@ class x_homeauto extends fritzsoap
      *
      * automatically generated; complete coding if necessary!
      *
-     * in: NewIndex
-     * out: NewAIN
-     * out: NewDeviceId
-     * out: NewFunctionBitMask
-     * out: NewFirmwareVersion
-     * out: NewManufacturer
-     * out: NewProductName
-     * out: NewDeviceName
-     * out: NewPresent
-     * out: NewMultimeterIsEnabled
-     * out: NewMultimeterIsValid
-     * out: NewMultimeterPower
-     * out: NewMultimeterEnergy
-     * out: NewTemperatureIsEnabled
-     * out: NewTemperatureIsValid
-     * out: NewTemperatureCelsius
-     * out: NewTemperatureOffset
-     * out: NewSwitchIsEnabled
-     * out: NewSwitchIsValid
-     * out: NewSwitchState
-     * out: NewSwitchMode
-     * out: NewSwitchLock
-     * out: NewHkrIsEnabled
-     * out: NewHkrIsValid
-     * out: NewHkrIsTemperature
-     * out: NewHkrSetVentilStatus
-     * out: NewHkrSetTemperature
-     * out: NewHkrReduceVentilStatus
-     * out: NewHkrReduceTemperature
-     * out: NewHkrComfortVentilStatus
-     * out: NewHkrComfortTemperature
+     * in: NewIndex (ui2)
+     * out: NewAIN (string)
+     * out: NewDeviceId (ui2)
+     * out: NewFunctionBitMask (ui2)
+     * out: NewFirmwareVersion (string)
+     * out: NewManufacturer (string)
+     * out: NewProductName (string)
+     * out: NewDeviceName (string)
+     * out: NewPresent (string)
+     * out: NewMultimeterIsEnabled (string)
+     * out: NewMultimeterIsValid (string)
+     * out: NewMultimeterPower (ui4)
+     * out: NewMultimeterEnergy (ui4)
+     * out: NewTemperatureIsEnabled (string)
+     * out: NewTemperatureIsValid (string)
+     * out: NewTemperatureCelsius (i4)
+     * out: NewTemperatureOffset (i4)
+     * out: NewSwitchIsEnabled (string)
+     * out: NewSwitchIsValid (string)
+     * out: NewSwitchState (string)
+     * out: NewSwitchMode (string)
+     * out: NewSwitchLock (boolean)
+     * out: NewHkrIsEnabled (string)
+     * out: NewHkrIsValid (string)
+     * out: NewHkrIsTemperature (i4)
+     * out: NewHkrSetVentilStatus (string)
+     * out: NewHkrSetTemperature (i4)
+     * out: NewHkrReduceVentilStatus (string)
+     * out: NewHkrReduceTemperature (i4)
+     * out: NewHkrComfortVentilStatus (string)
+     * out: NewHkrComfortTemperature (i4)
      *
+     * @param int $index
+     * @return array
      */
-    public function getGenericDeviceInfos()
+    public function getGenericDeviceInfos($index)
     {
-        $result = $this->client->GetGenericDeviceInfos();
-        if (is_soap_fault($result)) {
-            $this->getErrorData($result);
-            error_log(sprintf("Error: %s (%s)! Could not ... from/to FRITZ!Box", $this->errorCode, $this->errorText));
+        $result = $this->client->GetGenericDeviceInfos(
+            new \SoapParam($index, 'NewIndex'));
+        if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
             return;
         }
 
@@ -112,44 +106,45 @@ class x_homeauto extends fritzsoap
      *
      * automatically generated; complete coding if necessary!
      *
-     * in: NewAIN
-     * out: NewDeviceId
-     * out: NewFunctionBitMask
-     * out: NewFirmwareVersion
-     * out: NewManufacturer
-     * out: NewProductName
-     * out: NewDeviceName
-     * out: NewPresent
-     * out: NewMultimeterIsEnabled
-     * out: NewMultimeterIsValid
-     * out: NewMultimeterPower
-     * out: NewMultimeterEnergy
-     * out: NewTemperatureIsEnabled
-     * out: NewTemperatureIsValid
-     * out: NewTemperatureCelsius
-     * out: NewTemperatureOffset
-     * out: NewSwitchIsEnabled
-     * out: NewSwitchIsValid
-     * out: NewSwitchState
-     * out: NewSwitchMode
-     * out: NewSwitchLock
-     * out: NewHkrIsEnabled
-     * out: NewHkrIsValid
-     * out: NewHkrIsTemperature
-     * out: NewHkrSetVentilStatus
-     * out: NewHkrSetTemperature
-     * out: NewHkrReduceVentilStatus
-     * out: NewHkrReduceTemperature
-     * out: NewHkrComfortVentilStatus
-     * out: NewHkrComfortTemperature
+     * in: NewAIN (string)
+     * out: NewDeviceId (ui2)
+     * out: NewFunctionBitMask (ui2)
+     * out: NewFirmwareVersion (string)
+     * out: NewManufacturer (string)
+     * out: NewProductName (string)
+     * out: NewDeviceName (string)
+     * out: NewPresent (string)
+     * out: NewMultimeterIsEnabled (string)
+     * out: NewMultimeterIsValid (string)
+     * out: NewMultimeterPower (ui4)
+     * out: NewMultimeterEnergy (ui4)
+     * out: NewTemperatureIsEnabled (string)
+     * out: NewTemperatureIsValid (string)
+     * out: NewTemperatureCelsius (i4)
+     * out: NewTemperatureOffset (i4)
+     * out: NewSwitchIsEnabled (string)
+     * out: NewSwitchIsValid (string)
+     * out: NewSwitchState (string)
+     * out: NewSwitchMode (string)
+     * out: NewSwitchLock (boolean)
+     * out: NewHkrIsEnabled (string)
+     * out: NewHkrIsValid (string)
+     * out: NewHkrIsTemperature (i4)
+     * out: NewHkrSetVentilStatus (string)
+     * out: NewHkrSetTemperature (i4)
+     * out: NewHkrReduceVentilStatus (string)
+     * out: NewHkrReduceTemperature (i4)
+     * out: NewHkrComfortVentilStatus (string)
+     * out: NewHkrComfortTemperature (i4)
      *
+     * @param string $aIN
+     * @return array
      */
-    public function getSpecificDeviceInfos()
+    public function getSpecificDeviceInfos($aIN)
     {
-        $result = $this->client->GetSpecificDeviceInfos();
-        if (is_soap_fault($result)) {
-            $this->getErrorData($result);
-            error_log(sprintf("Error: %s (%s)! Could not ... from/to FRITZ!Box", $this->errorCode, $this->errorText));
+        $result = $this->client->GetSpecificDeviceInfos(
+            new \SoapParam($aIN, 'NewAIN'));
+        if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
             return;
         }
 
@@ -161,16 +156,19 @@ class x_homeauto extends fritzsoap
      *
      * automatically generated; complete coding if necessary!
      *
-     * in: NewAIN
-     * in: NewDeviceName
+     * in: NewAIN (string)
+     * in: NewDeviceName (string)
      *
+     * @param string $aIN
+     * @param string $deviceName
+     * @return void
      */
-    public function setDeviceName()
+    public function setDeviceName($aIN, $deviceName)
     {
-        $result = $this->client->SetDeviceName();
-        if (is_soap_fault($result)) {
-            $this->getErrorData($result);
-            error_log(sprintf("Error: %s (%s)! Could not ... from/to FRITZ!Box", $this->errorCode, $this->errorText));
+        $result = $this->client->SetDeviceName(
+            new \SoapParam($aIN, 'NewAIN'),
+            new \SoapParam($deviceName, 'NewDeviceName'));
+        if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
             return;
         }
 
@@ -182,16 +180,19 @@ class x_homeauto extends fritzsoap
      *
      * automatically generated; complete coding if necessary!
      *
-     * in: NewAIN
-     * in: NewSwitchState
+     * in: NewAIN (string)
+     * in: NewSwitchState (string)
      *
+     * @param string $aIN
+     * @param string $switchState
+     * @return void
      */
-    public function setSwitch()
+    public function setSwitch($aIN, $switchState)
     {
-        $result = $this->client->SetSwitch();
-        if (is_soap_fault($result)) {
-            $this->getErrorData($result);
-            error_log(sprintf("Error: %s (%s)! Could not ... from/to FRITZ!Box", $this->errorCode, $this->errorText));
+        $result = $this->client->SetSwitch(
+            new \SoapParam($aIN, 'NewAIN'),
+            new \SoapParam($switchState, 'NewSwitchState'));
+        if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
             return;
         }
 

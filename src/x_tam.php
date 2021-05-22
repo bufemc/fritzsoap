@@ -3,59 +3,54 @@
 namespace blacksenator\fritzsoap;
 
 /**
-* The class provides functions to read and manipulate
-* data via TR-064 interface on FRITZ!Box router from AVM:
-* according to:
-* @see: https://avm.de/fileadmin/user_upload/Global/Service/Schnittstellen/x_tam.pdf
-*
-* With the instantiation of the class, all available
-* services of the addressed FRITZ!Box are determined.
-* The service parameters and available actions are
-* provided in a compressed form as XML and can be output
-* with getServiceDescription().
-* The matching SOAP client only needs to be called with
-* the name of the services <services name = "..."> and
-* gets the correct location and uri from the XML
-* (see getFritzBoxServices() for details)
-*
-* +++++++++++++++++++++ ATTENTION +++++++++++++++++++++
-* THIS FILE IS AUTOMATIC ASSEMBLED BUT PARTLY REVIEWED!
-* MOST FUNCTIONS ARE FRAMEWORKS AND HAVE TO BE CORRECTLY
-* CODED, IF THEIR COMMENT WAS NOT OVERWRITTEN!
-* +++++++++++++++++++++++++++++++++++++++++++++++++++++
-*
-* @author Volker Püschel <knuffy@anasco.de>
-* @copyright Volker Püschel 2020
-* @license MIT
+ * The class provides functions to read and manipulate
+ * data via TR-064 interface on FRITZ!Box router from AVM.
+ *
+ * @see: https://avm.de/fileadmin/user_upload/Global/Service/Schnittstellen/x_tam.pdf
+ *
+ * +++++++++++++++++++++ ATTENTION +++++++++++++++++++++
+ * THIS FILE IS AUTOMATIC ASSEMBLED BUT PARTLY REVIEWED!
+ * ALL FUNCTIONS ARE FRAMEWORKS AND HAVE TO BE CORRECTLY
+ * CODED, IF THEIR COMMENT WAS NOT OVERWRITTEN!
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ *
+ * @author Volker Püschel <knuffy@anasco.de>
+ * @copyright Volker Püschel 2019 - 2021
+ * @license MIT
 **/
 
 use blacksenator\fritzsoap\fritzsoap;
 
 class x_tam extends fritzsoap
 {
+    const
+        SERVICE_TYPE = 'urn:dslforum-org:service:X_AVM-DE_TAM:1',
+        CONTROL_URL  = '/upnp/control/x_tam';
+
     /**
      * getInfo
      *
-     * out: NewEnable
-     * out: NewName
-     * out: NewTAMRunning
-     * out: NewStick
-     * out: NewStatus
-     * out: NewCapacity
-     * out: NewMode
-     * out: NewRingSeconds
-     * out: NewPhoneNumbers
+     * number of answering machine [0..n]
      *
-     * @param int $index number of answering machine
+     * out: NewEnable (boolean)
+     * out: NewName (string)
+     * out: NewTAMRunning (boolean)
+     * out: NewStick (ui2)
+     * out: NewStatus (ui2)
+     * out: NewCapacity (ui4)
+     * out: NewMode (string)
+     * out: NewRingSeconds (ui2)
+     * out: NewPhoneNumbers (string)
+     *
+     * @param int $index
      * @return array
      */
-    public function getInfo(int $index): array
+    public function getInfo($index)
     {
-        $result = $this->client->GetInfo(new \SoapParam($index, 'NewIndex'));
-        if (is_soap_fault($result)) {
-            $this->getErrorData($result);
-            error_log(sprintf("Error: %s (%s)! Could not get info from FRITZ!Box", $this->errorCode, $this->errorText));
-            return [];
+        $result = $this->client->GetInfo(
+            new \SoapParam($index, 'NewIndex'));
+        if ($this->errorHandling($result, 'Could not get info from FRITZ!Box')) {
+            return;
         }
 
         return $result;
@@ -66,16 +61,19 @@ class x_tam extends fritzsoap
      *
      * automatically generated; complete coding if necessary!
      *
-     * in: NewIndex
-     * in: NewEnable
+     * in: NewIndex (ui2)
+     * in: NewEnable (boolean)
      *
+     * @param int $index
+     * @param bool $enable
+     * @return void
      */
-    public function setEnable()
+    public function setEnable($index, $enable)
     {
-        $result = $this->client->SetEnable();
-        if (is_soap_fault($result)) {
-            $this->getErrorData($result);
-            error_log(sprintf("Error: %s (%s)! Could not ... from/to FRITZ!Box", $this->errorCode, $this->errorText));
+        $result = $this->client->SetEnable(
+            new \SoapParam($index, 'NewIndex'),
+            new \SoapParam($enable, 'NewEnable'));
+        if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
             return;
         }
 
@@ -87,16 +85,17 @@ class x_tam extends fritzsoap
      *
      * automatically generated; complete coding if necessary!
      *
-     * in: NewIndex
-     * out: NewURL
+     * in: NewIndex (ui2)
+     * out: NewURL (string)
      *
+     * @param int $index
+     * @return string
      */
-    public function getMessageList()
+    public function getMessageList($index)
     {
-        $result = $this->client->GetMessageList();
-        if (is_soap_fault($result)) {
-            $this->getErrorData($result);
-            error_log(sprintf("Error: %s (%s)! Could not ... from/to FRITZ!Box", $this->errorCode, $this->errorText));
+        $result = $this->client->GetMessageList(
+            new \SoapParam($index, 'NewIndex'));
+        if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
             return;
         }
 
@@ -108,17 +107,22 @@ class x_tam extends fritzsoap
      *
      * automatically generated; complete coding if necessary!
      *
-     * in: NewIndex
-     * in: NewMessageIndex
-     * in: NewMarkedAsRead
+     * in: NewIndex (ui2)
+     * in: NewMessageIndex (ui2)
+     * in: NewMarkedAsRead (boolean)
      *
+     * @param int $index
+     * @param int $messageIndex
+     * @param bool $markedAsRead
+     * @return void
      */
-    public function markMessage()
+    public function markMessage($index, $messageIndex, $markedAsRead)
     {
-        $result = $this->client->MarkMessage();
-        if (is_soap_fault($result)) {
-            $this->getErrorData($result);
-            error_log(sprintf("Error: %s (%s)! Could not ... from/to FRITZ!Box", $this->errorCode, $this->errorText));
+        $result = $this->client->MarkMessage(
+            new \SoapParam($index, 'NewIndex'),
+            new \SoapParam($messageIndex, 'NewMessageIndex'),
+            new \SoapParam($markedAsRead, 'NewMarkedAsRead'));
+        if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
             return;
         }
 
@@ -130,16 +134,19 @@ class x_tam extends fritzsoap
      *
      * automatically generated; complete coding if necessary!
      *
-     * in: NewIndex
-     * in: NewMessageIndex
+     * in: NewIndex (ui2)
+     * in: NewMessageIndex (ui2)
      *
+     * @param int $index
+     * @param int $messageIndex
+     * @return void
      */
-    public function deleteMessage()
+    public function deleteMessage($index, $messageIndex)
     {
-        $result = $this->client->DeleteMessage();
-        if (is_soap_fault($result)) {
-            $this->getErrorData($result);
-            error_log(sprintf("Error: %s (%s)! Could not ... from/to FRITZ!Box", $this->errorCode, $this->errorText));
+        $result = $this->client->DeleteMessage(
+            new \SoapParam($index, 'NewIndex'),
+            new \SoapParam($messageIndex, 'NewMessageIndex'));
+        if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
             return;
         }
 
@@ -151,15 +158,14 @@ class x_tam extends fritzsoap
      *
      * automatically generated; complete coding if necessary!
      *
-     * out: NewTAMList
+     * out: NewTAMList (string)
      *
+     * @return string
      */
     public function getList()
     {
         $result = $this->client->GetList();
-        if (is_soap_fault($result)) {
-            $this->getErrorData($result);
-            error_log(sprintf("Error: %s (%s)! Could not ... from/to FRITZ!Box", $this->errorCode, $this->errorText));
+        if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
             return;
         }
 

@@ -5,8 +5,9 @@ namespace blacksenator\fritzsoap;
 /**
  * The class provides functions to read and manipulate
  * data via TR-064 interface on FRITZ!Box router from AVM.
+ * No specific documentation available!
  *
- * @see: https://avm.de/fileadmin/user_upload/Global/Service/Schnittstellen/x_auth.pdf
+ * @see: https://avm.de/service/schnittstellen/
  *
  * +++++++++++++++++++++ ATTENTION +++++++++++++++++++++
  * THIS FILE IS AUTOMATIC ASSEMBLED!
@@ -21,24 +22,25 @@ namespace blacksenator\fritzsoap;
 
 use blacksenator\fritzsoap\fritzsoap;
 
-class x_auth extends fritzsoap
+class Control_5 extends fritzsoap
 {
     const
-        SERVICE_TYPE = 'urn:dslforum-org:service:X_AVM-DE_Auth:1',
-        CONTROL_URL  = '/upnp/control/x_auth';
+        SERVICE_TYPE = 'urn:schemas-upnp-org:service:ConnectionManager:1',
+        CONTROL_URL  = '/MediaServer/ConnectionManager/Control';
 
     /**
-     * getInfo
+     * getProtocolInfo
      *
      * automatically generated; complete coding if necessary!
      *
-     * out: NewEnabled (boolean)
+     * out: Source (string)
+     * out: Sink (string)
      *
-     * @return bool
+     * @return array
      */
-    public function getInfo()
+    public function getProtocolInfo()
     {
-        $result = $this->client->GetInfo();
+        $result = $this->client->GetProtocolInfo();
         if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
             return;
         }
@@ -47,17 +49,17 @@ class x_auth extends fritzsoap
     }
 
     /**
-     * getState
+     * getCurrentConnectionIDs
      *
      * automatically generated; complete coding if necessary!
      *
-     * out: NewState (string)
+     * out: ConnectionIDs (string)
      *
      * @return string
      */
-    public function getState()
+    public function getCurrentConnectionIDs()
     {
-        $result = $this->client->GetState();
+        $result = $this->client->GetCurrentConnectionIDs();
         if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
             return;
         }
@@ -66,24 +68,28 @@ class x_auth extends fritzsoap
     }
 
     /**
-     * setConfig
+     * getCurrentConnectionInfo
      *
      * automatically generated; complete coding if necessary!
      *
-     * in: NewAction (string)
-     * out: NewState (string)
-     * out: NewToken (string)
-     * out: NewMethods (string)
+     * in: ConnectionID (i4)
+     * out: RcsID (i4)
+     * out: AVTransportID (i4)
+     * out: ProtocolInfo (string)
+     * out: PeerConnectionManager (string)
+     * out: PeerConnectionID (i4)
+     * out: Direction (string)
+     * out: Status (string)
      *
-     * @param string $action
+     * @param int $connectionID
      * @return array
      */
-    public function setConfig($action)
+    public function getCurrentConnectionInfo($connectionID)
     {
-        $result = $this->client->SetConfig(
-            new \SoapParam($action, 'NewAction'));
+        $result = $this->client->GetCurrentConnectionInfo(
+            new \SoapParam($connectionID, 'ConnectionID'));
         if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
-            return;
+            return null;
         }
 
         return $result;

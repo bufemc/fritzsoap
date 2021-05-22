@@ -3,59 +3,52 @@
 namespace blacksenator\fritzsoap;
 
 /**
-* The class provides functions to read and manipulate
-* data via TR-064 interface on FRITZ!Box router from AVM:
-* according to:
-* @see: https://avm.de/fileadmin/user_upload/Global/Service/Schnittstellen/lanhostconfigmgmSCPD.pdf
-*
-* With the instantiation of the class, all available
-* services of the addressed FRITZ!Box are determined.
-* The service parameters and available actions are
-* provided in a compressed form as XML and can be output
-* with getServiceDescription().
-* The matching SOAP client only needs to be called with
-* the name of the services <services name = "..."> and
-* gets the correct location and uri from the XML
-* (see getFritzBoxServices() for details)
-*
-* +++++++++++++++++++++ ATTENTION +++++++++++++++++++++
-* THIS FILE IS AUTOMATIC ASSEMBLED!
-* ALL FUNCTIONS ARE FRAMEWORKS AND HAVE TO BE CORRECTLY
-* CODED, IF THEIR COMMENT WAS NOT OVERWRITTEN!
-* +++++++++++++++++++++++++++++++++++++++++++++++++++++
-*
-* @author Volker Püschel <knuffy@anasco.de>
-* @copyright Volker Püschel 2020
-* @license MIT
+ * The class provides functions to read and manipulate
+ * data via TR-064 interface on FRITZ!Box router from AVM:
+ *
+ * @see: https://avm.de/fileadmin/user_upload/Global/Service/Schnittstellen/lanhostconfigmgmSCPD.pdf
+ *
+ * +++++++++++++++++++++ ATTENTION +++++++++++++++++++++
+ * THIS FILE IS AUTOMATIC ASSEMBLED!
+ * ALL FUNCTIONS ARE FRAMEWORKS AND HAVE TO BE CORRECTLY
+ * CODED, IF THEIR COMMENT WAS NOT OVERWRITTEN!
+ * +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ *
+ * @author Volker Püschel <knuffy@anasco.de>
+ * @copyright Volker Püschel 2019 - 2021
+ * @license MIT
 **/
 
 use blacksenator\fritzsoap\fritzsoap;
 
 class lanhostconfigmgm extends fritzsoap
 {
+    const
+        SERVICE_TYPE = 'urn:dslforum-org:service:LANHostConfigManagement:1',
+        CONTROL_URL  = '/upnp/control/lanhostconfigmgm';
+
     /**
      * getInfo
      *
      * automatically generated; complete coding if necessary!
      *
-     * out: NewDHCPServerConfigurable
-     * out: NewDHCPRelay
-     * out: NewMinAddress
-     * out: NewMaxAddress
-     * out: NewReservedAddresses
-     * out: NewDHCPServerEnable
-     * out: NewDNSServers
-     * out: NewDomainName
-     * out: NewIPRouters
-     * out: NewSubnetMask
+     * out: NewDHCPServerConfigurable (boolean)
+     * out: NewDHCPRelay (boolean)
+     * out: NewMinAddress (string)
+     * out: NewMaxAddress (string)
+     * out: NewReservedAddresses (string)
+     * out: NewDHCPServerEnable (boolean)
+     * out: NewDNSServers (string)
+     * out: NewDomainName (string)
+     * out: NewIPRouters (string)
+     * out: NewSubnetMask (string)
      *
+     * @return array
      */
     public function getInfo()
     {
         $result = $this->client->GetInfo();
-        if (is_soap_fault($result)) {
-            $this->getErrorData($result);
-            error_log(sprintf("Error: %s (%s)! Could not ... from/to FRITZ!Box", $this->errorCode, $this->errorText));
+        if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
             return;
         }
 
@@ -67,15 +60,16 @@ class lanhostconfigmgm extends fritzsoap
      *
      * automatically generated; complete coding if necessary!
      *
-     * in: NewDHCPServerEnable
+     * in: NewDHCPServerEnable (boolean)
      *
+     * @param bool $dHCPServerEnable
+     * @return void
      */
-    public function setDHCPServerEnable()
+    public function setDHCPServerEnable($dHCPServerEnable)
     {
-        $result = $this->client->SetDHCPServerEnable();
-        if (is_soap_fault($result)) {
-            $this->getErrorData($result);
-            error_log(sprintf("Error: %s (%s)! Could not ... from/to FRITZ!Box", $this->errorCode, $this->errorText));
+        $result = $this->client->SetDHCPServerEnable(
+            new \SoapParam($dHCPServerEnable, 'NewDHCPServerEnable'));
+        if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
             return;
         }
 
@@ -87,18 +81,25 @@ class lanhostconfigmgm extends fritzsoap
      *
      * automatically generated; complete coding if necessary!
      *
-     * in: NewEnable
-     * in: NewIPAddress
-     * in: NewSubnetMask
-     * in: NewIPAddressingType
+     * in: NewEnable (boolean)
+     * in: NewIPAddress (string)
+     * in: NewSubnetMask (string)
+     * in: NewIPAddressingType (string)
      *
+     * @param bool $enable
+     * @param string $iPAddress
+     * @param string $subnetMask
+     * @param string $iPAddressingType
+     * @return void
      */
-    public function setIPInterface()
+    public function setIPInterface($enable, $iPAddress, $subnetMask, $iPAddressingType)
     {
-        $result = $this->client->SetIPInterface();
-        if (is_soap_fault($result)) {
-            $this->getErrorData($result);
-            error_log(sprintf("Error: %s (%s)! Could not ... from/to FRITZ!Box", $this->errorCode, $this->errorText));
+        $result = $this->client->SetIPInterface(
+            new \SoapParam($enable, 'NewEnable'),
+            new \SoapParam($iPAddress, 'NewIPAddress'),
+            new \SoapParam($subnetMask, 'NewSubnetMask'),
+            new \SoapParam($iPAddressingType, 'NewIPAddressingType'));
+        if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
             return;
         }
 
@@ -110,16 +111,15 @@ class lanhostconfigmgm extends fritzsoap
      *
      * automatically generated; complete coding if necessary!
      *
-     * out: NewMinAddress
-     * out: NewMaxAddress
+     * out: NewMinAddress (string)
+     * out: NewMaxAddress (string)
      *
+     * @return array
      */
     public function getAddressRange()
     {
         $result = $this->client->GetAddressRange();
-        if (is_soap_fault($result)) {
-            $this->getErrorData($result);
-            error_log(sprintf("Error: %s (%s)! Could not ... from/to FRITZ!Box", $this->errorCode, $this->errorText));
+        if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
             return;
         }
 
@@ -131,16 +131,19 @@ class lanhostconfigmgm extends fritzsoap
      *
      * automatically generated; complete coding if necessary!
      *
-     * in: NewMinAddress
-     * in: NewMaxAddress
+     * in: NewMinAddress (string)
+     * in: NewMaxAddress (string)
      *
+     * @param string $minAddress
+     * @param string $maxAddress
+     * @return void
      */
-    public function setAddressRange()
+    public function setAddressRange($minAddress, $maxAddress)
     {
-        $result = $this->client->SetAddressRange();
-        if (is_soap_fault($result)) {
-            $this->getErrorData($result);
-            error_log(sprintf("Error: %s (%s)! Could not ... from/to FRITZ!Box", $this->errorCode, $this->errorText));
+        $result = $this->client->SetAddressRange(
+            new \SoapParam($minAddress, 'NewMinAddress'),
+            new \SoapParam($maxAddress, 'NewMaxAddress'));
+        if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
             return;
         }
 
@@ -152,15 +155,14 @@ class lanhostconfigmgm extends fritzsoap
      *
      * automatically generated; complete coding if necessary!
      *
-     * out: NewIPRouters
+     * out: NewIPRouters (string)
      *
+     * @return string
      */
     public function getIPRoutersList()
     {
         $result = $this->client->GetIPRoutersList();
-        if (is_soap_fault($result)) {
-            $this->getErrorData($result);
-            error_log(sprintf("Error: %s (%s)! Could not ... from/to FRITZ!Box", $this->errorCode, $this->errorText));
+        if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
             return;
         }
 
@@ -172,15 +174,16 @@ class lanhostconfigmgm extends fritzsoap
      *
      * automatically generated; complete coding if necessary!
      *
-     * in: NewIPRouters
+     * in: NewIPRouters (string)
      *
+     * @param string $iPRouters
+     * @return void
      */
-    public function setIPRouter()
+    public function setIPRouter($iPRouters)
     {
-        $result = $this->client->SetIPRouter();
-        if (is_soap_fault($result)) {
-            $this->getErrorData($result);
-            error_log(sprintf("Error: %s (%s)! Could not ... from/to FRITZ!Box", $this->errorCode, $this->errorText));
+        $result = $this->client->SetIPRouter(
+            new \SoapParam($iPRouters, 'NewIPRouters'));
+        if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
             return;
         }
 
@@ -192,15 +195,14 @@ class lanhostconfigmgm extends fritzsoap
      *
      * automatically generated; complete coding if necessary!
      *
-     * out: NewSubnetMask
+     * out: NewSubnetMask (string)
      *
+     * @return string
      */
     public function getSubnetMask()
     {
         $result = $this->client->GetSubnetMask();
-        if (is_soap_fault($result)) {
-            $this->getErrorData($result);
-            error_log(sprintf("Error: %s (%s)! Could not ... from/to FRITZ!Box", $this->errorCode, $this->errorText));
+        if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
             return;
         }
 
@@ -212,15 +214,16 @@ class lanhostconfigmgm extends fritzsoap
      *
      * automatically generated; complete coding if necessary!
      *
-     * in: NewSubnetMask
+     * in: NewSubnetMask (string)
      *
+     * @param string $subnetMask
+     * @return void
      */
-    public function setSubnetMask()
+    public function setSubnetMask($subnetMask)
     {
-        $result = $this->client->SetSubnetMask();
-        if (is_soap_fault($result)) {
-            $this->getErrorData($result);
-            error_log(sprintf("Error: %s (%s)! Could not ... from/to FRITZ!Box", $this->errorCode, $this->errorText));
+        $result = $this->client->SetSubnetMask(
+            new \SoapParam($subnetMask, 'NewSubnetMask'));
+        if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
             return;
         }
 
@@ -232,15 +235,14 @@ class lanhostconfigmgm extends fritzsoap
      *
      * automatically generated; complete coding if necessary!
      *
-     * out: NewDNSServers
+     * out: NewDNSServers (string)
      *
+     * @return string
      */
     public function getDNSServers()
     {
         $result = $this->client->GetDNSServers();
-        if (is_soap_fault($result)) {
-            $this->getErrorData($result);
-            error_log(sprintf("Error: %s (%s)! Could not ... from/to FRITZ!Box", $this->errorCode, $this->errorText));
+        if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
             return;
         }
 
@@ -252,15 +254,14 @@ class lanhostconfigmgm extends fritzsoap
      *
      * automatically generated; complete coding if necessary!
      *
-     * out: NewIPInterfaceNumberOfEntries
+     * out: NewIPInterfaceNumberOfEntries (ui2)
      *
+     * @return int
      */
     public function getIPInterfaceNumberOfEntries()
     {
         $result = $this->client->GetIPInterfaceNumberOfEntries();
-        if (is_soap_fault($result)) {
-            $this->getErrorData($result);
-            error_log(sprintf("Error: %s (%s)! Could not ... from/to FRITZ!Box", $this->errorCode, $this->errorText));
+        if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
             return;
         }
 

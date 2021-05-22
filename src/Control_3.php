@@ -5,13 +5,11 @@ namespace blacksenator\fritzsoap;
 /**
  * The class provides functions to read and manipulate
  * data via TR-064 interface on FRITZ!Box router from AVM.
- * No documentation available!
+ * No specific documentation available!
+ *
  * @see: https://avm.de/service/schnittstellen/
  *
  * +++++++++++++++++++++ ATTENTION +++++++++++++++++++++
- *
- *    ! NO LONGER INCLUDED IN THE SCOPE OF SERVICE !
- *
  * THIS FILE IS AUTOMATIC ASSEMBLED!
  * ALL FUNCTIONS ARE FRAMEWORKS AND HAVE TO BE CORRECTLY
  * CODED, IF THEIR COMMENT WAS NOT OVERWRITTEN!
@@ -24,43 +22,28 @@ namespace blacksenator\fritzsoap;
 
 use blacksenator\fritzsoap\fritzsoap;
 
-class fritzbox extends fritzsoap
+class Control_3 extends fritzsoap
 {
     const
-        SERVICE_TYPE = 'urn:schemas-any-com:service:fritzbox:1',
-        CONTROL_URL  = '/upnp/control/fritzbox';
+        SERVICE_TYPE = 'urn:avm.de:service:AVM_ServerStatus:1',
+        CONTROL_URL  = '/MediaServer/ServerStatus/Control';
 
     /**
-     * setLogParam
+     * scanInfo
      *
      * automatically generated; complete coding if necessary!
      *
-     * in: NewLogPort
-     * in: NewLogLevel
+     * out: StartTime (string)
+     * out: EndTime (string)
+     * out: AudioFiles (ui4)
+     * out: MovieFiles (ui4)
+     * out: ImageFiles (ui4)
      *
+     * @return array
      */
-    public function setLogParam()
+    public function scanInfo()
     {
-        $result = $this->client->SetLogParam();
-        if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
-            return;
-        }
-
-        return $result;
-    }
-
-    /**
-     * getMaclist
-     *
-     * automatically generated; complete coding if necessary!
-     *
-     * out: NewMaclist
-     * out: NewMaclistChangeCounter
-     *
-     */
-    public function getMaclist()
-    {
-        $result = $this->client->GetMaclist();
+        $result = $this->client->ScanInfo();
         if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
             return;
         }

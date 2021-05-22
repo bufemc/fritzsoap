@@ -4,9 +4,9 @@ namespace blacksenator\fritzsoap;
 
 /**
  * The class provides functions to read and manipulate
- * data via TR-064 interface on FRITZ!Box router from AVM.
- * according to
- * @see: https://avm.de/fileadmin/user_upload/Global/Service/Schnittstellen/wanpppconnSCPD.pdf
+ * data via TR-064 interface on FRITZ!Box router from AVM:
+ *
+ * @see https://avm.de/fileadmin/user_upload/Global/Service/Schnittstellen/IGD1.pdf
  *
  * +++++++++++++++++++++ ATTENTION +++++++++++++++++++++
  * THIS FILE IS AUTOMATIC ASSEMBLED!
@@ -21,56 +21,28 @@ namespace blacksenator\fritzsoap;
 
 use blacksenator\fritzsoap\fritzsoap;
 
-class wanpppconn1 extends fritzsoap
+class WANIPConn1_1 extends fritzsoap
 {
     const
-        SERVICE_TYPE = 'urn:dslforum-org:service:WANPPPConnection:1',
-        CONTROL_URL  = '/upnp/control/wanpppconn1';
+        SERVICE_TYPE = 'urn:schemas-upnp-org:service:WANIPConnection:2',
+        CONTROL_URL  = '/igd2upnp/control/WANIPConn1';
 
     /**
-     * getInfo
+     * setConnectionType
      *
      * automatically generated; complete coding if necessary!
      *
-     * out: NewEnable (boolean)
-     * out: NewConnectionStatus (string)
-     * out: NewPossibleConnectionTypes (string)
-     * out: NewConnectionType (string)
-     * out: NewName (string)
-     * out: NewUptime (ui4)
-     * out: NewUpstreamMaxBitRate (ui4)
-     * out: NewDownstreamMaxBitRate (ui4)
-     * out: NewLastConnectionError (string)
-     * out: NewIdleDisconnectTime (ui4)
-     * out: NewRSIPAvailable (boolean)
-     * out: NewUserName (string)
-     * out: NewNATEnabled (boolean)
-     * out: NewExternalIPAddress (string)
-     * out: NewDNSServers (string)
-     * out: NewMACAddress (string)
-     * out: NewConnectionTrigger (string)
-     * out: NewLastAuthErrorInfo (string)
-     * out: NewMaxCharsUsername (ui2)
-     * out: NewMinCharsUsername (ui2)
-     * out: NewAllowedCharsUsername (string)
-     * out: NewMaxCharsPassword (ui2)
-     * out: NewMinCharsPassword (ui2)
-     * out: NewAllowedCharsPassword (string)
-     * out: NewTransportType (string)
-     * out: NewRouteProtocolRx (string)
-     * out: NewPPPoEServiceName (string)
-     * out: NewRemoteIPAddress (string)
-     * out: NewPPPoEACName (string)
-     * out: NewDNSEnabled (boolean)
-     * out: NewDNSOverrideAllowed (boolean)
+     * in: NewConnectionType (string)
      *
-     * @return array
+     * @param string $connectionType
+     * @return void
      */
-    public function getInfo()
+    public function setConnectionType($connectionType)
     {
-        $result = $this->client->GetInfo();
+        $result = $this->client->SetConnectionType(
+            new \SoapParam($connectionType, 'NewConnectionType'));
         if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
-            return;
+            return null;
         }
 
         return $result;
@@ -97,21 +69,114 @@ class wanpppconn1 extends fritzsoap
     }
 
     /**
-     * setConnectionType
+     * requestConnection
      *
      * automatically generated; complete coding if necessary!
      *
-     * in: NewConnectionType (string)
-     *
-     * @param string $connectionType
      * @return void
      */
-    public function setConnectionType($connectionType)
+    public function requestConnection()
     {
-        $result = $this->client->SetConnectionType(
-            new \SoapParam($connectionType, 'NewConnectionType'));
+        $result = $this->client->RequestConnection();
         if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
             return;
+        }
+
+        return $result;
+    }
+
+    /**
+     * requestTermination
+     *
+     * automatically generated; complete coding if necessary!
+     *
+     * @return void
+     */
+    public function requestTermination()
+    {
+        $result = $this->client->RequestTermination();
+        if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
+            return;
+        }
+
+        return $result;
+    }
+
+    /**
+     * forceTermination
+     *
+     * automatically generated; complete coding if necessary!
+     *
+     * @return void
+     */
+    public function forceTermination()
+    {
+        $result = $this->client->ForceTermination();
+        if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
+            return;
+        }
+
+        return $result;
+    }
+
+    /**
+     * setAutoDisconnectTime
+     *
+     * automatically generated; complete coding if necessary!
+     *
+     * in: NewAutoDisconnectTime (ui4)
+     *
+     * @param int $autoDisconnectTime
+     * @return void
+     */
+    public function setAutoDisconnectTime($autoDisconnectTime)
+    {
+        $result = $this->client->SetAutoDisconnectTime(
+            new \SoapParam($autoDisconnectTime, 'NewAutoDisconnectTime'));
+        if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
+            return null;
+        }
+
+        return $result;
+    }
+
+    /**
+     * setIdleDisconnectTime
+     *
+     * automatically generated; complete coding if necessary!
+     *
+     * in: NewIdleDisconnectTime (ui4)
+     *
+     * @param int $idleDisconnectTime
+     * @return void
+     */
+    public function setIdleDisconnectTime($idleDisconnectTime)
+    {
+        $result = $this->client->SetIdleDisconnectTime(
+            new \SoapParam($idleDisconnectTime, 'NewIdleDisconnectTime'));
+        if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
+            return null;
+        }
+
+        return $result;
+    }
+
+    /**
+     * setWarnDisconnectDelay
+     *
+     * automatically generated; complete coding if necessary!
+     *
+     * in: NewWarnDisconnectDelay (ui4)
+     *
+     * @param int $warnDisconnectDelay
+     * @return void
+     */
+    public function setWarnDisconnectDelay($warnDisconnectDelay)
+    {
+        $result = $this->client->SetWarnDisconnectDelay(
+            new \SoapParam($warnDisconnectDelay, 'NewWarnDisconnectDelay'));
+        if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
+            return null;
         }
 
         return $result;
@@ -139,17 +204,17 @@ class wanpppconn1 extends fritzsoap
     }
 
     /**
-     * getUserName
+     * getAutoDisconnectTime
      *
      * automatically generated; complete coding if necessary!
      *
-     * out: NewUserName (string)
+     * out: NewAutoDisconnectTime (ui4)
      *
-     * @return string
+     * @return int
      */
-    public function getUserName()
+    public function getAutoDisconnectTime()
     {
-        $result = $this->client->GetUserName();
+        $result = $this->client->GetAutoDisconnectTime();
         if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
             return;
         }
@@ -158,19 +223,17 @@ class wanpppconn1 extends fritzsoap
     }
 
     /**
-     * setUserName
+     * getIdleDisconnectTime
      *
      * automatically generated; complete coding if necessary!
      *
-     * in: NewUserName (string)
+     * out: NewIdleDisconnectTime (ui4)
      *
-     * @param string $userName
-     * @return void
+     * @return int
      */
-    public function setUserName($userName)
+    public function getIdleDisconnectTime()
     {
-        $result = $this->client->SetUserName(
-            new \SoapParam($userName, 'NewUserName'));
+        $result = $this->client->GetIdleDisconnectTime();
         if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
             return;
         }
@@ -179,19 +242,17 @@ class wanpppconn1 extends fritzsoap
     }
 
     /**
-     * setPassword
+     * getWarnDisconnectDelay
      *
      * automatically generated; complete coding if necessary!
      *
-     * in: NewPassword (string)
+     * out: NewWarnDisconnectDelay (ui4)
      *
-     * @param string $password
-     * @return void
+     * @return int
      */
-    public function setPassword($password)
+    public function getWarnDisconnectDelay()
     {
-        $result = $this->client->SetPassword(
-            new \SoapParam($password, 'NewPassword'));
+        $result = $this->client->GetWarnDisconnectDelay();
         if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
             return;
         }
@@ -212,61 +273,6 @@ class wanpppconn1 extends fritzsoap
     public function getNATRSIPStatus()
     {
         $result = $this->client->GetNATRSIPStatus();
-        if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
-            return;
-        }
-
-        return $result;
-    }
-
-    /**
-     * setConnectionTrigger
-     *
-     * automatically generated; complete coding if necessary!
-     *
-     * in: NewConnectionTrigger (string)
-     *
-     * @param string $connectionTrigger
-     * @return void
-     */
-    public function setConnectionTrigger($connectionTrigger)
-    {
-        $result = $this->client->SetConnectionTrigger(
-            new \SoapParam($connectionTrigger, 'NewConnectionTrigger'));
-        if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
-            return;
-        }
-
-        return $result;
-    }
-
-    /**
-     * forceTermination
-     *
-     * automatically generated; complete coding if necessary!
-     *
-     * @return void
-     */
-    public function forceTermination()
-    {
-        $result = $this->client->ForceTermination();
-        if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
-            return;
-        }
-
-        return $result;
-    }
-
-    /**
-     * requestConnection
-     *
-     * automatically generated; complete coding if necessary!
-     *
-     * @return void
-     */
-    public function requestConnection()
-    {
-        $result = $this->client->RequestConnection();
         if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
             return;
         }
@@ -297,7 +303,7 @@ class wanpppconn1 extends fritzsoap
         $result = $this->client->GetGenericPortMappingEntry(
             new \SoapParam($portMappingIndex, 'NewPortMappingIndex'));
         if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
-            return;
+            return null;
         }
 
         return $result;
@@ -325,11 +331,11 @@ class wanpppconn1 extends fritzsoap
     public function getSpecificPortMappingEntry($remoteHost, $externalPort, $protocol)
     {
         $result = $this->client->GetSpecificPortMappingEntry(
-            new \SoapParam($remoteHost, 'NewRemoteHost'),
-            new \SoapParam($externalPort, 'NewExternalPort'),
+            new \SoapParam($remoteHost, 'NewRemoteHost'), 
+            new \SoapParam($externalPort, 'NewExternalPort'), 
             new \SoapParam($protocol, 'NewProtocol'));
         if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
-            return;
+            return null;
         }
 
         return $result;
@@ -362,16 +368,16 @@ class wanpppconn1 extends fritzsoap
     public function addPortMapping($remoteHost, $externalPort, $protocol, $internalPort, $internalClient, $enabled, $portMappingDescription, $leaseDuration)
     {
         $result = $this->client->AddPortMapping(
-            new \SoapParam($remoteHost, 'NewRemoteHost'),
-            new \SoapParam($externalPort, 'NewExternalPort'),
-            new \SoapParam($protocol, 'NewProtocol'),
-            new \SoapParam($internalPort, 'NewInternalPort'),
-            new \SoapParam($internalClient, 'NewInternalClient'),
-            new \SoapParam($enabled, 'NewEnabled'),
-            new \SoapParam($portMappingDescription, 'NewPortMappingDescription'),
+            new \SoapParam($remoteHost, 'NewRemoteHost'), 
+            new \SoapParam($externalPort, 'NewExternalPort'), 
+            new \SoapParam($protocol, 'NewProtocol'), 
+            new \SoapParam($internalPort, 'NewInternalPort'), 
+            new \SoapParam($internalClient, 'NewInternalClient'), 
+            new \SoapParam($enabled, 'NewEnabled'), 
+            new \SoapParam($portMappingDescription, 'NewPortMappingDescription'), 
             new \SoapParam($leaseDuration, 'NewLeaseDuration'));
         if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
-            return;
+            return null;
         }
 
         return $result;
@@ -394,11 +400,11 @@ class wanpppconn1 extends fritzsoap
     public function deletePortMapping($remoteHost, $externalPort, $protocol)
     {
         $result = $this->client->DeletePortMapping(
-            new \SoapParam($remoteHost, 'NewRemoteHost'),
-            new \SoapParam($externalPort, 'NewExternalPort'),
+            new \SoapParam($remoteHost, 'NewRemoteHost'), 
+            new \SoapParam($externalPort, 'NewExternalPort'), 
             new \SoapParam($protocol, 'NewProtocol'));
         if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
-            return;
+            return null;
         }
 
         return $result;
@@ -424,144 +430,193 @@ class wanpppconn1 extends fritzsoap
     }
 
     /**
-     * x_GetDNSServers
+     * x_AVM_DE_GetExternalIPv6Address
      *
      * automatically generated; complete coding if necessary!
      *
-     * out: NewDNSServers (string)
+     * out: NewExternalIPv6Address (string)
+     * out: NewPrefixLength (ui1)
+     * out: NewValidLifetime (ui4)
+     * out: NewPreferedLifetime (ui4)
      *
+     * @return array
+     */
+    public function x_AVM_DE_GetExternalIPv6Address()
+    {
+        $result = $this->client->X_AVM_DE_GetExternalIPv6Address();
+        if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
+            return;
+        }
+
+        return $result;
+    }
+
+    /**
+     * x_AVM_DE_GetIPv6Prefix
+     *
+     * automatically generated; complete coding if necessary!
+     *
+     * out: NewIPv6Prefix (string)
+     * out: NewPrefixLength (ui1)
+     * out: NewValidLifetime (ui4)
+     * out: NewPreferedLifetime (ui4)
+     *
+     * @return array
+     */
+    public function x_AVM_DE_GetIPv6Prefix()
+    {
+        $result = $this->client->X_AVM_DE_GetIPv6Prefix();
+        if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
+            return;
+        }
+
+        return $result;
+    }
+
+    /**
+     * x_AVM_DE_GetDNSServer
+     *
+     * automatically generated; complete coding if necessary!
+     *
+     * out: NewIPv4DNSServer1 (string)
+     * out: NewIPv4DNSServer2 (string)
+     *
+     * @return array
+     */
+    public function x_AVM_DE_GetDNSServer()
+    {
+        $result = $this->client->X_AVM_DE_GetDNSServer();
+        if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
+            return;
+        }
+
+        return $result;
+    }
+
+    /**
+     * x_AVM_DE_GetIPv6DNSServer
+     *
+     * automatically generated; complete coding if necessary!
+     *
+     * out: NewIPv6DNSServer1 (string)
+     * out: NewValidLifetime1 (ui4)
+     * out: NewIPv6DNSServer2 (string)
+     * out: NewValidLifetime (ui4)
+     *
+     * @return array
+     */
+    public function x_AVM_DE_GetIPv6DNSServer()
+    {
+        $result = $this->client->X_AVM_DE_GetIPv6DNSServer();
+        if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
+            return;
+        }
+
+        return $result;
+    }
+
+    /**
+     * deletePortMappingRange
+     *
+     * automatically generated; complete coding if necessary!
+     *
+     * in: NewStartPort (ui2)
+     * in: NewEndPort (ui2)
+     * in: NewProtocol (string)
+     * in: NewManage (boolean)
+     *
+     * @param int $startPort
+     * @param int $endPort
+     * @param string $protocol
+     * @param bool $manage
+     * @return void
+     */
+    public function deletePortMappingRange($startPort, $endPort, $protocol, $manage)
+    {
+        $result = $this->client->DeletePortMappingRange(
+            new \SoapParam($startPort, 'NewStartPort'), 
+            new \SoapParam($endPort, 'NewEndPort'), 
+            new \SoapParam($protocol, 'NewProtocol'), 
+            new \SoapParam($manage, 'NewManage'));
+        if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
+            return null;
+        }
+
+        return $result;
+    }
+
+    /**
+     * getListOfPortMappings
+     *
+     * automatically generated; complete coding if necessary!
+     *
+     * in: NewStartPort (ui2)
+     * in: NewEndPort (ui2)
+     * in: NewProtocol (string)
+     * in: NewManage (boolean)
+     * in: NewNumberOfPorts (ui2)
+     * out: NewPortListing (string)
+     *
+     * @param int $startPort
+     * @param int $endPort
+     * @param string $protocol
+     * @param bool $manage
+     * @param int $numberOfPorts
      * @return string
      */
-    public function x_GetDNSServers()
+    public function getListOfPortMappings($startPort, $endPort, $protocol, $manage, $numberOfPorts)
     {
-        $result = $this->client->X_GetDNSServers();
+        $result = $this->client->GetListOfPortMappings(
+            new \SoapParam($startPort, 'NewStartPort'), 
+            new \SoapParam($endPort, 'NewEndPort'), 
+            new \SoapParam($protocol, 'NewProtocol'), 
+            new \SoapParam($manage, 'NewManage'), 
+            new \SoapParam($numberOfPorts, 'NewNumberOfPorts'));
         if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
-            return;
+            return null;
         }
 
         return $result;
     }
 
     /**
-     * getLinkLayerMaxBitRates
+     * addAnyPortMapping
      *
      * automatically generated; complete coding if necessary!
      *
-     * out: NewUpstreamMaxBitRate (ui4)
-     * out: NewDownstreamMaxBitRate (ui4)
+     * in: NewRemoteHost (string)
+     * in: NewExternalPort (ui2)
+     * in: NewProtocol (string)
+     * in: NewInternalPort (ui2)
+     * in: NewInternalClient (string)
+     * in: NewEnabled (boolean)
+     * in: NewPortMappingDescription (string)
+     * in: NewLeaseDuration (ui4)
+     * out: NewReservedPort (ui2)
      *
-     * @return array
-     */
-    public function getLinkLayerMaxBitRates()
-    {
-        $result = $this->client->GetLinkLayerMaxBitRates();
-        if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
-            return;
-        }
-
-        return $result;
-    }
-
-    /**
-     * getPortMappingNumberOfEntries
-     *
-     * automatically generated; complete coding if necessary!
-     *
-     * out: NewPortMappingNumberOfEntries (ui2)
-     *
+     * @param string $remoteHost
+     * @param int $externalPort
+     * @param string $protocol
+     * @param int $internalPort
+     * @param string $internalClient
+     * @param bool $enabled
+     * @param string $portMappingDescription
+     * @param int $leaseDuration
      * @return int
      */
-    public function getPortMappingNumberOfEntries()
+    public function addAnyPortMapping($remoteHost, $externalPort, $protocol, $internalPort, $internalClient, $enabled, $portMappingDescription, $leaseDuration)
     {
-        $result = $this->client->GetPortMappingNumberOfEntries();
+        $result = $this->client->AddAnyPortMapping(
+            new \SoapParam($remoteHost, 'NewRemoteHost'), 
+            new \SoapParam($externalPort, 'NewExternalPort'), 
+            new \SoapParam($protocol, 'NewProtocol'), 
+            new \SoapParam($internalPort, 'NewInternalPort'), 
+            new \SoapParam($internalClient, 'NewInternalClient'), 
+            new \SoapParam($enabled, 'NewEnabled'), 
+            new \SoapParam($portMappingDescription, 'NewPortMappingDescription'), 
+            new \SoapParam($leaseDuration, 'NewLeaseDuration'));
         if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
-            return;
-        }
-
-        return $result;
-    }
-
-    /**
-     * setRouteProtocolRx
-     *
-     * automatically generated; complete coding if necessary!
-     *
-     * in: NewRouteProtocolRx (string)
-     *
-     * @param string $routeProtocolRx
-     * @return void
-     */
-    public function setRouteProtocolRx($routeProtocolRx)
-    {
-        $result = $this->client->SetRouteProtocolRx(
-            new \SoapParam($routeProtocolRx, 'NewRouteProtocolRx'));
-        if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
-            return;
-        }
-
-        return $result;
-    }
-
-    /**
-     * setIdleDisconnectTime
-     *
-     * automatically generated; complete coding if necessary!
-     *
-     * in: NewIdleDisconnectTime (ui4)
-     *
-     * @param int $idleDisconnectTime
-     * @return void
-     */
-    public function setIdleDisconnectTime($idleDisconnectTime)
-    {
-        $result = $this->client->SetIdleDisconnectTime(
-            new \SoapParam($idleDisconnectTime, 'NewIdleDisconnectTime'));
-        if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
-            return;
-        }
-
-        return $result;
-    }
-
-    /**
-     * x_AVM_DE_GetAutoDisconnectTimeSpan
-     *
-     * automatically generated; complete coding if necessary!
-     *
-     * out: NewX_AVM-DE_DisconnectPreventionEnable (boolean)
-     * out: NewX_AVM-DE_DisconnectPreventionHour (ui2)
-     *
-     * @return array
-     */
-    public function x_AVM_DE_GetAutoDisconnectTimeSpan()
-    {
-        $result = $this->client->{'X_AVM-DE_GetAutoDisconnectTimeSpan'}();
-        if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
-            return;
-        }
-
-        return $result;
-    }
-
-    /**
-     * x_AVM_DE_SetAutoDisconnectTimeSpan
-     *
-     * automatically generated; complete coding if necessary!
-     *
-     * in: NewX_AVM-DE_DisconnectPreventionEnable (boolean)
-     * in: NewX_AVM-DE_DisconnectPreventionHour (ui2)
-     *
-     * @param bool $x_AVM_DE_DisconnectPreventionEnable
-     * @param int $x_AVM_DE_DisconnectPreventionHour
-     * @return void
-     */
-    public function x_AVM_DE_SetAutoDisconnectTimeSpan($x_AVM_DE_DisconnectPreventionEnable, $x_AVM_DE_DisconnectPreventionHour)
-    {
-        $result = $this->client->{'X_AVM-DE_SetAutoDisconnectTimeSpan'}(
-            new \SoapParam($x_AVM_DE_DisconnectPreventionEnable, 'NewX_AVM-DE_DisconnectPreventionEnable'),
-            new \SoapParam($x_AVM_DE_DisconnectPreventionHour, 'NewX_AVM-DE_DisconnectPreventionHour'));
-        if ($this->errorHandling($result, 'Could not ... from/to FRITZ!Box')) {
-            return;
+            return null;
         }
 
         return $result;
